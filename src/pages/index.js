@@ -1,0 +1,9 @@
+export { default as Dashboard } from "./Dashboard";
+export { default as Home } from "./Home";
+export { default as Login } from "./Login";
+export { default as News } from "./News";
+export { default as Registration } from "./Registration";
+export { default as About } from "./About";
+export { default as Contact } from "./Contact";
+export { default as Setting } from "./Setting";
+export { default as Error } from "./Error";

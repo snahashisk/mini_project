@@ -4,7 +4,7 @@ import { Navbar } from "./components";
 import { Home, Dashboard, News, About, Contact, Setting, Error } from "./pages";
 function App() {
   return (
-    <div className="grid grid-cols-5 max-h-screen">
+    <div className="grid grid-cols-5 grid-rows-1 max-h-screen">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

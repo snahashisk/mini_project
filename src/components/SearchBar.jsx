@@ -3,7 +3,7 @@ import myphoto from "../image/my-photo.jpg";
 import { BellOutlined, BulbOutlined } from "@ant-design/icons";
 const SearchBar = () => {
   return (
-    <div className="col-span-4 row-span-1 bg-white flex items-center justify-between px-6">
+    <div className="flex justify-between px-8 bg-white py-5">
       <input
         type="text"
         className="bg-gray-200 focus:outline-none p-3 px-6 rounded-full block w-1/2 text-sm"

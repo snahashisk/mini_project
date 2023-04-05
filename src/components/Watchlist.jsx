@@ -1,10 +1,16 @@
 import React from "react";
+import RecCard from "./RecCard";
 
 const Watchlist = () => {
   return (
-    <div className="col-span-1 row-span-5 ml-2 mt-2 m-4 bg-white rounded-lg p-3">
-      <p>Apple</p>
-      <p>AAPL</p>
+    <div className="h-full bg-white rounded-lg p-4">
+      <h2 className="text-xl mb-4 px-4">My Watchlist</h2>
+      <RecCard />
+      <RecCard />
+      <RecCard />
+      <RecCard />
+      <RecCard />
+      <RecCard />
     </div>
   );
 };

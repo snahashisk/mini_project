@@ -1,16 +1,18 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import RecCard from "./RecCard";
 
 const Watchlist = () => {
+  const symbols = ["TSLA", "META", "V", "WMT", "JPM", "PEP"];
+
+  let count = 0;
   return (
     <div className="h-full bg-white rounded-lg p-4">
       <h2 className="text-xl mb-4 px-4">My Watchlist</h2>
-      <RecCard />
-      <RecCard />
-      <RecCard />
-      <RecCard />
-      <RecCard />
-      <RecCard />
+      {symbols.map((symbol) => (
+        <RecCard key={count++} name={symbol} />
+      ))}
     </div>
   );
 };

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   LineChart,
   Line,
@@ -8,11 +9,19 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
+import { StockDetail } from "./index";
+import { AiOutlineInfoCircle, AiOutlineClose } from "react-icons/ai";
+import StockSymbol from "../contexts/StockSymbol";
 
 const Charts = () => {
   const API_KEY = "VZGAT3CT2MZ04TOO";
-  const SYMBOL = "IBM";
+  const FINNHUB_API = "cgora21r01qlmgv23vd0cgora21r01qlmgv23vdg";
   const [data, setData] = useState([]);
+  const { stockSymbol } = useContext(StockSymbol);
+  const SYMBOL = stockSymbol;
+  const [price, setPrice] = useState(null);
+  const [companyName, setCompanyName] = useState("");
+  const [company, setCompany] = useState({});
 
   const getData = () => {
     fetch(
@@ -31,20 +40,110 @@ const Charts = () => {
       });
   };
 
+  const getDetails = async () => {
+    const response = await axios.get(
+      `https://finnhub.io/api/v1/quote?symbol=${SYMBOL}&token=${FINNHUB_API}`
+    );
+    setPrice(response.data.c);
+  };
+
+  const fetchCompanyName = async () => {
+    try {
+      const response = await axios.get(
+        `https://finnhub.io/api/v1/stock/profile2?symbol=${SYMBOL}&token=${FINNHUB_API}`
+      );
+      setCompanyName(response.data.name);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchCompanyDetails = async () => {
+    try {
+      const response = await axios.get(
+        `https://finnhub.io/api/v1/stock/profile2?symbol=${stockSymbol}&token=${FINNHUB_API}`
+      );
+      setCompany(response.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   useEffect(() => {
     getData();
-  }, []);
+    getDetails();
+    fetchCompanyName();
+  }, [stockSymbol]);
 
+  const [modalOpen, setModalOpen] = useState(false);
+
+  function handleOpenModal() {
+    fetchCompanyDetails();
+    setModalOpen(true);
+    console.log(company.weburl);
+  }
+
+  function handleCloseModal() {
+    setModalOpen(false);
+  }
+
+  if (data.length < 10) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-2xl">Loading Data...</p>
+      </div>
+    );
+  }
   return (
     <div className="p-4 px-6">
       <div className="flex justify-between border-b-2 pb-2">
         <div className="flex flex-col gap-1">
-          <h2 className="text-3xl">Apple Inc.</h2>
-          <p>AAPL</p>
+          <h2 className="text-3xl flex items-center">
+            {companyName}
+            <span
+              className="inline-block pl-2 text-2xl text-gray-400 cursor-pointer"
+              onClick={handleOpenModal}
+            >
+              <AiOutlineInfoCircle />
+            </span>
+          </h2>
+          <p>{SYMBOL}</p>
         </div>
         <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-semibold">$150.70</h2>
+          <h2 className="text-2xl font-medium">
+            <span className="font-normal">Price</span> : {price} $
+          </h2>
           <p className="font-thin">Last updated at 14:30</p>
+          <StockDetail open={modalOpen} onClose={handleCloseModal}>
+            <div className="flex gap-4 pb-4 border-b-2 relative">
+              <img
+                src={company.logo}
+                alt="company-logo"
+                className="w-1/6 rounded-md"
+              />
+              <div className="flex flex-col">
+                <h2 className="text-3xl mb-1">{company.name}</h2>
+                <p className="">{company.ticker}</p>
+              </div>
+              <AiOutlineClose
+                className="text-xl text-gray-400 cursor-pointer absolute right-0 top-0"
+                onClick={handleCloseModal}
+              />
+            </div>
+            <p className="pt-3">{company.description}</p>
+            <p>Industry: {company.finnhubIndustry}</p>
+            <p>IPO: {company.ipo}</p>
+            <p>Exchange: {company.exchange}</p>
+            <p>Market Capitalization: {company.marketCapitalization}</p>
+            <p className="border-b-2 pb-3">
+              Total Share: {company.shareOutstanding}
+            </p>
+            <a href={company.weburl} target="_blank" rel="noopener noreferrer">
+              <button className="text-blue-600 pt-3 outline-none">
+                Visit Website..
+              </button>
+            </a>
+          </StockDetail>
         </div>
       </div>
       <ul className="flex justify-around py-2">

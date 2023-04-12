@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import StockSymbol from "../contexts/StockSymbol";
 
 const RecCard = ({ name }) => {
   const apiKey2 = "cgoflmpr01qpst9taoi0cgoflmpr01qpst9taoig";
   const [quote, setQuote] = useState({});
-  const url = "https://fapi.fun/funnhub/company/profile";
   const [companyName, setCompanyName] = useState(name);
   const [companyLogo, setCompanyLogo] = useState();
+  const { setStockSymbol } = useContext(StockSymbol);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +36,7 @@ const RecCard = ({ name }) => {
 
     fetchData();
     fetchDetails();
-  }, []);
+  }, [name]);
 
   let style;
   if (quote["dp"] < 0) {
@@ -47,8 +48,15 @@ const RecCard = ({ name }) => {
   return (
     <div className="grid grid-cols-3 py-2 px-4 border-b-2 pb-2">
       <div className="col-span-2 flex items-center gap-2 w-full">
-        <img src={companyLogo} className="w-10 rounded-full" />
-        <h3 className="font-normal">{companyName}</h3>
+        <img
+          src={companyLogo}
+          alt="Company-logo"
+          className="w-10 rounded-full hover:scale-125 duration-200 cursor-pointer"
+          onClick={() => {
+            setStockSymbol(name);
+          }}
+        />
+        <h3 className="font-normal w-1/2 leading-5">{companyName}</h3>
       </div>
 
       <div className="col-span-1">

@@ -2,7 +2,7 @@ import React from "react";
 import { SearchBar, TrendStock, Watchlist, Charts } from "../components";
 const Home = () => {
   return (
-    <div className="col-span-4 max-h-screen bg-gray-200">
+    <div className="col-span-4 max-h-screen bg-gray-200 overflow-hidden">
       <div className="w-full h-20">
         <SearchBar />
       </div>

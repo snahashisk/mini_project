@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import StockSymbol from "../contexts/StockSymbol";
 
 const SquareCard = ({ name }) => {
-  const apiKey2 = "cgoflmpr01qpst9taoi0cgoflmpr01qpst9taoig";
+  const apiKey = "cgo42t1r01qpst9t1lv0cgo42t1r01qpst9t1lvg";
   const [quote, setQuote] = useState({});
   const [companyName, setCompanyName] = useState(name);
   const [companyLogo, setCompanyLogo] = useState();
+  const { setStockSymbol } = useContext(StockSymbol);
 
   useEffect(() => {
     const fetchData = async () => {
       await axios
-        .get(`https://finnhub.io/api/v1/quote?symbol=${name}&token=${apiKey2}`)
+        .get(`https://finnhub.io/api/v1/quote?symbol=${name}&token=${apiKey}`)
         .then((response) => {
           const quotesdata = response.data;
           setQuote(quotesdata);
@@ -20,7 +22,7 @@ const SquareCard = ({ name }) => {
     const fetchDetails = async () => {
       await axios
         .get(
-          `https://finnhub.io/api/v1/stock/profile2?symbol=${name}&token=${apiKey2}`
+          `https://finnhub.io/api/v1/stock/profile2?symbol=${name}&token=${apiKey}`
         )
         .then((response) => {
           // Handle the API response here
@@ -34,7 +36,7 @@ const SquareCard = ({ name }) => {
 
     fetchData();
     fetchDetails();
-  }, []);
+  }, [name]);
 
   let change_style;
 
@@ -45,11 +47,21 @@ const SquareCard = ({ name }) => {
   }
 
   return (
-    <div className="w-1/5 h-full p-3 rounded-lg shadow-md hover:shadow-2xl hover:scale-105 hover:z-10 duration-200 cursor-pointer">
+    <div
+      className="w-1/5 h-full p-3 rounded-lg shadow-md hover:shadow-2xl hover:scale-105 hover:z-10 duration-200 cursor-pointer"
+      onClick={() => {
+        setStockSymbol(name);
+        console.log(name);
+      }}
+    >
       <div className="flex items-center gap-2 mb-1">
-        <img src={companyLogo} className="rounded-full w-9" />
+        <img
+          src={companyLogo}
+          alt="company-logo"
+          className="rounded-full w-9"
+        />
         <h1 className="mb-2 text-lg font-normal text-blue-600">
-          {companyName}
+          {companyName.split(" ", 2)[0]}
         </h1>
       </div>
 

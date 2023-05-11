@@ -3,9 +3,10 @@ import myphoto from "../image/my-photo.jpg";
 import { BellOutlined, BulbOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import StockSymbol from "../contexts/StockSymbol";
 import NewsContext from "../contexts/NewsContext";
+import LoginContext from "../contexts/LoginContext";
 import { AiFillCloseCircle, AiOutlineSearch } from "react-icons/ai";
 
 const SearchBar = () => {
@@ -18,13 +19,28 @@ const SearchBar = () => {
   );
   const { setStockSymbol } = useContext(StockSymbol);
   const { setNewsSymbol } = useContext(NewsContext);
+  const { login } = useContext(LoginContext);
+  const loginData = localStorage.getItem("loginData");
+  const navigate = useNavigate();
 
   const handleSymbolChange = (e) => {
     setSymbol(e.target.value);
     console.log(location.pathname);
   };
 
+  if (
+    location.pathname === "/home" ||
+    location.pathname === "/dashboard" ||
+    location.pathname === "/news" ||
+    location.pathname === "/setting" ||
+    location.pathname === "/about" ||
+    (location.pathname === "/contact" && loginData === null)
+  ) {
+    navigate("/error");
+  }
+
   const handleClear = () => {
+    console.log(login);
     setResults([]);
     setModalStyle(
       "absolute bg-white h-1/2 overflow-y-scroll p-4 rounded-lg top-16 hidden z-40"
@@ -100,7 +116,16 @@ const SearchBar = () => {
           className="w-10 rounded-full border-2 border-spacing-2"
           alt="Customer Avatar"
         />
-        <p className="text-xl font-medium text-gray-600">Snahashis Kanrar</p>
+        <p className="text-xl font-medium text-gray-600">{loginData}</p>
+        <button
+          className="bg-blue-600 text-white px-2 py-1 rounded-md text-sm"
+          onClick={() => {
+            localStorage.removeItem("loginData");
+            navigate("/");
+          }}
+        >
+          Log Out
+        </button>
       </div>
     </div>
   );

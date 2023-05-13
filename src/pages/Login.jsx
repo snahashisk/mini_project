@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import bgimage from "../image/bg-image.jpg";
 import {
   AiFillFacebook,
   AiOutlineGoogle,
@@ -21,7 +22,7 @@ const Login = () => {
         email: email.trim(),
         password: password.trim(),
       });
-      localStorage.setItem("loginData", response.data.message);
+      localStorage.setItem("loginData", response.data.message.split("@")[0]);
       navigate("/home");
     } catch (error) {
       console.error(error.response.data);
@@ -109,7 +110,7 @@ const Login = () => {
                 Remember Me
               </span>
             </label>
-            <a href="#" class="text-blue-500 font-medium">
+            <a href="/error" class="text-blue-500 font-medium">
               Forgot Password?
             </a>
           </div>
@@ -127,7 +128,21 @@ const Login = () => {
           </Link>
         </p>
       </div>
-      <div className="w-1/2 h-full overflow-hidden bg-gradient-to-br from-purple-600 to-teal-400 via-blue-500 flex flex-col justify-center items-center text-white"></div>
+      <div className="relative w-1/2 h-full overflow-hidden bg-gradient-to-br from-purple-600 to-teal-400 via-blue-500 flex flex-col justify-center items-center text-white">
+        <img src={bgimage} className="absolute" />
+
+        <div className="h-2/4 w-3/4 p-8 bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-400 flex flex-col justify-around">
+          <p className="text-8xl font-bold text-yellow-400 ">DOMINATE</p>{" "}
+          <p className="text-4xl">THE STOCK MARKET WITH US</p>
+          <p className=" font-light">
+            Stay ahead of the market with our cutting-edge stock price
+            prediction web app. Our intuitive dashboard delivers real-time
+            insights, personalized watchlists, and accurate trend forecasts.
+            Take control of your investments with our user-friendly interface,
+            and make informed trading decisions to maximize your returns.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

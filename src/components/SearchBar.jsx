@@ -28,17 +28,6 @@ const SearchBar = () => {
     console.log(location.pathname);
   };
 
-  if (
-    location.pathname === "/home" ||
-    location.pathname === "/dashboard" ||
-    location.pathname === "/news" ||
-    location.pathname === "/setting" ||
-    location.pathname === "/about" ||
-    (location.pathname === "/contact" && loginData === null)
-  ) {
-    navigate("/error");
-  }
-
   const handleClear = () => {
     console.log(login);
     setResults([]);
@@ -108,7 +97,7 @@ const SearchBar = () => {
           </li>
         ))}
       </ul>
-      <div className="flex gap-4 items-center text-lg">
+      <div className="flex gap-4 items-center text-lg w-1/4 justify-end">
         <BellOutlined />
         <BulbOutlined />
         <img
@@ -116,7 +105,7 @@ const SearchBar = () => {
           className="w-10 rounded-full border-2 border-spacing-2"
           alt="Customer Avatar"
         />
-        <p className="text-xl font-medium text-gray-600">{loginData}</p>
+        <p className="font-medium text-gray-600">{loginData}</p>
         <button
           className="bg-blue-600 text-white px-2 py-1 rounded-md text-sm"
           onClick={() => {

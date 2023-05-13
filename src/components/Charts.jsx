@@ -8,13 +8,15 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  AreaChart,
+  Area,
 } from "recharts";
 import { StockDetail } from "./index";
 import { AiOutlineInfoCircle, AiOutlineClose } from "react-icons/ai";
 import StockSymbol from "../contexts/StockSymbol";
 
 const Charts = () => {
-  const API_KEY = "VZGAT3CT2MZ04TOO";
+  // const API_KEY = "VZGAT3CT2MZ04TOO";
   const FINNHUB_API = "cgora21r01qlmgv23vd0cgora21r01qlmgv23vdg";
   const [data, setData] = useState([]);
   const { stockSymbol } = useContext(StockSymbol);
@@ -22,21 +24,51 @@ const Charts = () => {
   const [price, setPrice] = useState(null);
   const [companyName, setCompanyName] = useState("");
   const [company, setCompany] = useState({});
+  const [resolution, setResolution] = useState("W");
+
+  const currentDate = new Date();
+  const currentTimestamp = Math.floor(currentDate.getTime() / 1000);
+
+  const date = new Date("January 1, 2014");
+  const oldTimestamp = Math.floor(date.getTime() / 1000);
 
   const getData = () => {
     fetch(
-      `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${SYMBOL}&apikey=${API_KEY}`
+      `https://finnhub.io/api/v1/stock/candle?symbol=${SYMBOL}&resolution=${resolution}&from=${oldTimestamp}&to=${currentTimestamp}&token=${FINNHUB_API}`
     )
       .then((response) => response.json())
       .then((data) => {
-        const timeSeries = data["Monthly Time Series"];
-        const formattedData = Object.entries(timeSeries).map(
-          ([time, values]) => ({
-            time,
-            close: Number(values["4. close"]),
-          })
-        );
+        const closePrices = data.c;
+        const timestamps = data.t;
+        const formattedData = timestamps.map((time, index) => ({
+          time: new Date(time * 1000).toISOString(),
+          close: closePrices[index],
+        }));
         setData(formattedData);
+      });
+  };
+
+  const getPredictData = () => {
+    fetch("http://localhost:8000/predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ symbol: SYMBOL }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const parsedData = JSON.parse(data);
+        const formattedData = parsedData.map((item) => ({
+          time: new Date(item.Date).toISOString(),
+          close: item.Close,
+        }));
+
+        setData(formattedData);
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.error(error);
       });
   };
 
@@ -74,6 +106,10 @@ const Charts = () => {
     getDetails();
     fetchCompanyName();
   }, [stockSymbol]);
+
+  useEffect(() => {
+    getData();
+  }, [resolution]);
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -147,22 +183,50 @@ const Charts = () => {
         </div>
       </div>
       <ul className="flex justify-around py-2">
-        <li className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white">
+        <li
+          className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white"
+          onClick={() => {
+            setResolution("30");
+          }}
+        >
           1 Day
         </li>
-        <li className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white">
+        <li
+          className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white"
+          onClick={() => {
+            setResolution("60");
+          }}
+        >
           1 Week
         </li>
-        <li className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white">
+        <li
+          className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white"
+          onClick={() => {
+            setResolution("D");
+          }}
+        >
           1 Month
         </li>
-        <li className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white">
+        <li
+          className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white"
+          onClick={() => {
+            setResolution("W");
+          }}
+        >
           3 Month
         </li>
-        <li className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white">
+        <li
+          className="px-4 py-1 cursor-pointer rounded-full bg-blue-600 text-xs text-white"
+          onClick={() => {
+            setResolution("M");
+          }}
+        >
           1 Year
         </li>
-        <li className="px-4 py-1 cursor-pointer rounded-full bg-yellow-400 text-xs font-semibold">
+        <li
+          className="px-4 py-1 cursor-pointer rounded-full bg-yellow-400 text-xs font-semibold"
+          onClick={getPredictData}
+        >
           Predict
         </li>
         <li className="px-4 py-1 cursor-pointer rounded-full bg-red-600 text-white text-xs font-semibold">
@@ -170,7 +234,7 @@ const Charts = () => {
         </li>
       </ul>
       <div>
-        <LineChart
+        <AreaChart
           width={730}
           height={340}
           data={data}
@@ -179,15 +243,21 @@ const Charts = () => {
           <defs>
             <linearGradient id="colorClose" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+              <stop offset="95%" stopColor="#800080" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="6 6" />
           <XAxis dataKey="time" />
           <YAxis />
           <Tooltip />
-          <Line type="monotone" dataKey="close" stroke="#8884d8" dot={false} />
-        </LineChart>
+          <Area
+            type="monotone"
+            dataKey="close"
+            stroke="#8884d8"
+            fill="#8884d8"
+            dot={false}
+          />
+        </AreaChart>
       </div>
     </div>
   );

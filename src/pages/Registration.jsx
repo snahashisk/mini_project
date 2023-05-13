@@ -1,17 +1,19 @@
 import React, { useState } from "react";
+import bgimage from "../image/bg-image.jpg";
 import axios from "axios";
 import {
   AiFillFacebook,
   AiOutlineGoogle,
   AiOutlineTwitter,
 } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Registration = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
@@ -25,6 +27,7 @@ const Registration = () => {
         confirmPassword,
       });
       console.log(response.data);
+      navigate("/");
     } catch (error) {
       console.error(error.response.data);
       setErrorMessage(error.response.data.error);
@@ -32,8 +35,19 @@ const Registration = () => {
   };
   return (
     <div className="w-screen h-screen overflow-hidden flex flex-row-reverse">
-      <div className="w-1/2 h-full overflow-hidden bg-gradient-to-br from-purple-600 to-teal-400 via-blue-500 flex flex-col justify-center items-center text-white">
-        hello Snahashis Kanrar
+      <div className="relative w-1/2 h-full overflow-hidden bg-gradient-to-br from-purple-600 to-teal-400 via-blue-500 flex flex-col justify-center items-center text-white">
+        <img src={bgimage} className="absolute" />
+        <div className="h-2/4 w-3/4 p-8 bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-400 flex flex-col justify-around">
+          <p className="text-8xl font-bold text-yellow-400 ">DOMINATE</p>{" "}
+          <p className="text-4xl">THE STOCK MARKET WITH US</p>
+          <p className=" font-light">
+            Stay ahead of the market with our cutting-edge stock price
+            prediction web app. Our intuitive dashboard delivers real-time
+            insights, personalized watchlists, and accurate trend forecasts.
+            Take control of your investments with our user-friendly interface,
+            and make informed trading decisions to maximize your returns.
+          </p>
+        </div>
       </div>
       <form className="w-1/2 h-full py-16 px-40">
         <h1 className="text-2xl font-semibold mb-8 text-blue-800">
